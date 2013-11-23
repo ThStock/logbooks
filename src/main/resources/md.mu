@@ -1,12 +1,15 @@
 ## {{{title}}} {{{previousVersion}}} .. {{{version}}} - {{{owner}}}
 {{#tasks}}
-### {{{title}}} {{#id}}({{{id}}}){{/id}}
-{{{br}}}
+### {{{title}}} {{#id}}({{#url}}[{{{id}}}]({{{url}}}){{/url}}{{^url}}{{{id}}}{{/url}}){{/id}}
+{{br}}
 {{#details}}
 * {{{.}}}
 {{/details}}
-{{{br}}}
+{{br}}
+<small>{{#contributors}}- {{{name}}} {{/contributors}} -</small>
 {{/tasks}}
+{{br}}
+---
 {{#metaLines}}
 {{{.}}}
 {{/metaLines}}
