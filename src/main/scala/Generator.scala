@@ -4,22 +4,19 @@ import org.fusesource.scalate.TemplateEngine
 
 object Generator extends App {
 
-  val engine = new TemplateEngine
-  val outputFile = new File("index.md")
-  val resources = "src/main/resources"
-  val contentFolder = new File(outputFile.getParentFile, resources)
-  val webPath = contentFolder.toURI
+  val author0 = Contributor("author@example.org")
+  val author1 = Contributor("author1@example.org")
+  val author2 = Contributor("author2@example.org")
+  val author3 = Contributor("author3@example.org")
+  val author4 = Contributor("author4@example.org")
+  val author5 = Contributor("author5@example.org")
 
-  val author0 = Contributor("author")
-  val author1 = Contributor("author1")
-  val author2 = Contributor("author2")
-  val author3 = Contributor("author3")
-  val author4 = Contributor("author4")
-  val author5 = Contributor("author5")
+  val reviewer = Contributor("reviewer@example.org", "reviewer")
+  val commiter = Contributor("commiter@example.org", "committer")
 
   val intialLayout = Task("Initial HTML layout", Some(TaskId("1", "https://github.com/ThStock/logbooks/issues/1")),
     Seq("New layout added", "Font size applied"),
-    Seq(author2))
+    Seq(author2, reviewer, commiter))
 
   val sampleData = Task("Sample data", Some(TaskId("SUBTASK-2")),
     Seq("PROBLEM-000000 added",
@@ -30,48 +27,48 @@ object Generator extends App {
   val tooLong = Task(
     "A very long subject .. maybe too long, to be shown in a single line .." +
     " I hope the automatic word wrapping works well",
-    Some(TaskId("PROBLEM-000000")), Seq("Nothing was changed"), Seq(author0)
+    Some(TaskId("PROBLEM-000000")), Seq("Nothing was changed"), Seq(author0, reviewer)
     )
-
   val misc = Task("Misc", None, Seq(
     "I've no idea what I've changed",
     "A misc line added",
     "A set of authors forged"
     ), Seq(author0, author1, author2, author3, author4, author5))
 
-  val tasks = Seq(intialLayout, sampleData, tooLong, misc)
-
   val map = Map(
     "owner" -> "ThStock",
-    "previousVersion" -> "0",
+    "logoImg" -> "http://lorempixel.com/100/100/abstract/",
     "version" -> "1.0",
     "title" -> "logbooks",
-    "tasks" -> (tasks),
-    "metaLines" -> Seq("log v.0..v1.0 # 2010-10-10T12:12:12 @83b7ef")
+    "title-notes" -> "v.0..v1.0",
+    "tasks" -> Seq(intialLayout, sampleData, tooLong, misc),
+    "metaLines" -> Seq("git log v.0..v1.0 # 2010-10-10T12:12:12 @83b7ef")
     )
 
-  writeToFile(toHtml(map), outputFile)
+  Seq("md", "html").map(e => writeToFile(toTemplate(e + ".mu", map), new File("index." + e)))
 
   case class TaskId(id:String, _url:String = "#") {
     def url:Option[String] = _url match {
       case "#" => None
-      case urlValue:String => Some(urlValue)
+      case _ => Some(_url)
     }
   }
-
-  case class Contributor(name:String, email:String = "")
-
+  case class Contributor(email:String, _job:String = "") {
+    def hash = md5(email)
+    def job:Option[String] = _job match {
+      case "" => None
+      case _ => Some(_job)
+    }
+    def name = email.replaceFirst("@.*", "")
+  }
   case class Task(title:String, id:Option[TaskId],
     details:Seq[String], contributors:Seq[Contributor])
 
-  def toTemplate(pathTo:String, fileName:String, map:Map[String,AnyRef]):String = {
-    val text = Source.fromInputStream(getClass.getResourceAsStream(pathTo + fileName)).mkString
+  lazy val engine = new TemplateEngine
+  def toTemplate(fileName:String, map:Map[String,AnyRef]):String = {
+    val text = Source.fromInputStream(getClass.getResourceAsStream(fileName)).mkString
     val template = engine.compileMoustache(text)
     return engine.layout("",template, map.toMap)
-  }
-
-  def toHtml(map:Map[String,AnyRef]):String = {
-    return toTemplate("", "md.mu", map)
   }
 
   def writeToFile( s: String, file:File) {
@@ -80,4 +77,9 @@ object Generator extends App {
     finally{ out.close }
   }
 
+  def md5(s: String):String =  {
+    import java.security.MessageDigest
+    return MessageDigest.getInstance("MD5")
+    .digest(s.getBytes).map("%02x".format(_)).mkString
+  }
 }

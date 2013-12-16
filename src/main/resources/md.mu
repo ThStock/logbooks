@@ -1,4 +1,4 @@
-## {{{title}}} {{{previousVersion}}} .. {{{version}}} - {{{owner}}}
+## {{{title}}} {{{version}}} - {{{owner}}}
 {{#tasks}}
 ### {{{title}}} {{#id}}({{#url}}[{{{id}}}]({{{url}}}){{/url}}{{^url}}{{{id}}}{{/url}}){{/id}}
 {{br}}
