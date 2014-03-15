@@ -14,7 +14,9 @@ object Generator extends App {
   val reviewer = Contributor("reviewer@example.org", "reviewer")
   val commiter = Contributor("commiter@example.org", "committer")
 
-  val intialLayout = Task("Initial HTML layout", Some(TaskId("1", "https://github.com/ThStock/logbooks/issues/1")),
+  def githubTaskId(id:Int) = Some(TaskId("GHTSLB-" + id, "https://github.com/ThStock/logbooks/issues/" + id))
+
+  val intialLayout = Task("Initial HTML layout", githubTaskId(1),
     Seq("New layout added", "Font size applied"),
     Seq(author2, reviewer, commiter))
 
@@ -29,10 +31,19 @@ object Generator extends App {
     " I hope the automatic word wrapping works well",
     Some(TaskId("PROBLEM-000000")), Seq("Nothing was changed"), Seq(author0, reviewer)
     )
+
+  val toggleDetails = Task("Add hide/show details button", githubTaskId(3), Seq(
+    "Details partition added",
+    "Toggle details button added",
+    "Added a new Task for this list"
+    ), Seq(author0))
+
   val misc = Task("Misc", None, Seq(
     "I've no idea what I've changed",
     "A misc line added",
-    "A set of authors forged"
+    "A set of authors forged",
+    "New testline for detail toggle button added",
+    "Extracted github taskid creation"
     ), Seq(author0, author1, author2, author3, author4, author5))
 
   val map = Map(
@@ -41,7 +52,7 @@ object Generator extends App {
     "version" -> "1.0",
     "title" -> "logbooks",
     "title-notes" -> "v.0..v1.0",
-    "tasks" -> Seq(intialLayout, sampleData, tooLong, misc),
+    "tasks" -> Seq(intialLayout, sampleData, tooLong, toggleDetails, misc),
     "metaLines" -> Seq("git log v.0..v1.0 # 2010-10-10T12:12:12 @83b7ef")
     )
 
@@ -62,7 +73,19 @@ object Generator extends App {
     def name = email.replaceFirst("@.*", "")
   }
   case class Task(title:String, id:Option[TaskId],
-    details:Seq[String], contributors:Seq[Contributor])
+    details:Seq[String], contributors:Seq[Contributor]) {
+    private def rowCountOfCols(cols:Int)(seqLength:Int):Int = {
+      val shift = seqLength - 1
+      return (cols - shift % cols + shift) / cols
+    }
+    private val detailsSelected:Int = 2 * rowCountOfCols(3)(contributors.size)
+    def detailsLeft:Seq[String] = details.take(detailsSelected)
+    def detailsRight:Seq[String] = details.takeRight(details.size - detailsSelected)
+    def hasDetails:Boolean = detailsRight match {
+      case Seq() => false
+      case _ => true
+    }
+  }
 
   lazy val engine = new TemplateEngine
   def toTemplate(fileName:String, map:Map[String,AnyRef]):String = {

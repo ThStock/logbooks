@@ -3,7 +3,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>{{{title}}} - {{{version}}}</title>
   <link href='http://fonts.googleapis.com/css?family=Roboto:400,400italic,700,700italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
   <style>
     body {
       background-color: #F5F5F5;
@@ -57,7 +57,21 @@
       opacity: 0.2;
     }
     ul li {
-      font-size: smaller;
+      font-size: .8em;
+    }
+    @media screen and (device-aspect-ratio: 40/71) {
+      ul li {
+        font-size: .7em;
+      }
+    }
+    @media screen and (device-aspect-ratio: 40/71) and (orientation : landscape) {
+      ul li {
+        font-size: .5em;
+        margin-left: 1.5em
+      }
+      .task h4 {
+        font-size: .6em;
+      }
     }
     ul {
       padding-left: 1.5em
@@ -69,7 +83,7 @@
     .title strong a {
       color: #4183C4;
     }
-    h5, h4, h2, body ul, body p{
+    h5, h4, h2, body ul, body p {
       margin: 0;
     }
     h3 {
@@ -112,6 +126,9 @@
       color: silver;
       font-size: 70%;
     }
+    .footer .job {
+      font-size: 100%;
+    }
     .outer {
       border: 1px #ddd solid;
       border-radius: 5px;
@@ -128,7 +145,112 @@
       font-size: .1em;
       margin-right: .2em;
     }
+    .expand {
+      display:inline-block;
+      margin-left:5px;
+      background-color: #F5F5F5;
+      border: 1px solid #ccc;
+      border-radius: .2em;
+      vertical-align: middle;
+      margin-bottom: 2px;
+      height: 10px;
+    }
+    @media screen and (device-aspect-ratio: 40/71) {
+      .expand {
+        display:inline-block;
+        margin-left:5px;
+        background-color: #F5F5F5;
+        border: 1px solid #ccc;
+        border-radius: .2em;
+        vertical-align: top;
+        font-size: 200%;
+        height: .7em;
+        width: 2em;
+      }
+    }
+    @media screen and (device-aspect-ratio: 40/71) and (orientation : landscape)  {
+      .expand {
+        margin-top: .2em
+      }
+    }
+    .expand:hover {
+      background-color: #ddd;
+    }
+    .expand.active, .expand.active:hover {
+      background-color: #4183C4;
+    }
+    .expand A {
+      text-decoration: none;
+      vertical-align: super;
+      cursor: pointer;
+      font-size: .7em;
+      padding: 0;
+      padding-right: .2em;
+      padding-top: 1px;
+    }
+    .expand A SVG {
+      margin-left: .3em;
+      width: 2em;
+      fill: #ccc;
+    }
+    .hidden {
+      display: none;
+    }
   </style>
+  <script type="text/javascript">
+    function toggleDetails(element) {
+      var sliced = function(e) { return Array.prototype.slice.call(e); }
+      var expanderSpan = element.parentNode;
+      var taskElemets = sliced(expanderSpan.parentNode.parentNode.childNodes);
+      var isClass = function(className) {
+        return function(e) {
+          return e.className != undefined && e.className.indexOf(className) != -1;
+        }
+      };
+      var toggleClassName = function(originalClassName, toggleClassName) {
+        return function(element) {
+          var className = element.className;
+          if (element.className != originalClassName) {
+            element.className = originalClassName;
+          } else {
+            element.className = originalClassName + " " + toggleClassName;
+          }
+          return element;
+        }
+      };
+      var typeFilter = function(typeName) {
+        return function(element) {
+          return element != undefined && element.localName === typeName;
+        }
+      }
+
+      var toChildElementOfType = function(elementName) {
+        return function(element) {
+          var ul = sliced(element.childNodes) //
+            .filter(typeFilter(elementName));
+          return ul;
+        }
+      }
+
+      var first = function(element) {
+        return element[0];
+      }
+
+      taskElemets
+        .filter(isClass("details"))
+        .map(toChildElementOfType("ul"))
+        .map(first)
+        .map(toChildElementOfType("li"))
+        .forEach(function (liElements) {
+          liElements
+            .filter(isClass("detail"))
+            .map(toggleClassName("detail", "hidden"));
+          })
+        ;
+      toggleClassName("expand", "active")(expanderSpan);
+    }
+
+  </script>
 </head>
 <body>
   <div class="outer">
@@ -146,12 +268,23 @@
         <img src="http://lb.gravatar.com/avatar/{{{hash}}}?d=https%3A%2F%2Fidenticons.github.com%2F{{{hash}}}.png&amp;s=52" title="{{{name}}}" class="{{{job}}}"/>
         {{/contributors}}
       </div>
-      <h4 class="title">{{{title}}} {{#id}}<nobr>(<strong>{{#url}}<a href="{{{url}}}">{{{id}}}</a>{{/url}}{{^url}}{{{id}}}{{/url}}</strong>)</nobr>{{/id}}</h4>
+      <h4 class="title">{{{title}}} {{#id}}<nobr>(<strong>{{#url}}<a href="{{{url}}}">{{{id}}}</a>{{/url}}{{^url}}{{{id}}}{{/url}}</strong>)</nobr>{{/id}}{{#hasDetails}}
+        <span class="expand"><a onclick="toggleDetails(this);">
+          <svg>
+            <rect x="2"  y="4" width="2" height="2" />
+            <rect x="8"  y="4" width="2" height="2" />
+            <rect x="14" y="4" width="2" height="2" />
+          </svg>
+        </a></span>{{/hasDetails}}
+      </h4>
       <div class="details">
         <ul>
-          {{#details}}
+          {{#detailsLeft}}
           <li>{{{.}}}</li>
-          {{/details}}
+          {{/detailsLeft}}
+          {{#detailsRight}}
+          <li class="detail hidden">{{{.}}}</li>
+          {{/detailsRight}}
         </ul>
       </div>
     </div>
