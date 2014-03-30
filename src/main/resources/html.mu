@@ -3,7 +3,15 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>{{{title}}} - {{{version}}}</title>
   <link href='http://fonts.googleapis.com/css?family=Roboto:400,400italic,700,700italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Logbook">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <link rel="apple-touch-icon" href="apple-touch-icon-precomposed.png">
+  <link rel="shortcut icon" href="apple-touch-icon-precomposed.png" type="image/x-icon">
   <style>
     body {
       background-color: #F5F5F5;
