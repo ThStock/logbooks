@@ -20,6 +20,10 @@
 * Added a new Task for this list
 
 <small>- author -</small>
+### Add an Icon ([GHTSLB-4](https://github.com/ThStock/logbooks/issues/4))
+* Added an Icon
+
+<small>- author4 -</small>
 ### Misc 
 * I've no idea what I've changed
 * A misc line added

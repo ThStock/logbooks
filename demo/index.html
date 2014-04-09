@@ -6,12 +6,10 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-
-  <link rel="apple-touch-icon" href="apple-touch-icon-precomposed.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Logbook"> <!--12 characters max, depends on char width-->
+  <meta name="apple-mobile-web-app-title" content="Logbook">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-
+  <link rel="apple-touch-icon" href="data:image/png;base64,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" />
   <link rel="shortcut icon" href="apple-touch-icon-precomposed.png" type="image/x-icon">
   <style>
     body {
@@ -333,6 +331,18 @@
           <li>Details partition added</li>
           <li>Toggle details button added</li>
           <li class="detail hidden">Added a new Task for this list</li>
+          </ul>
+      </div>
+    </div>
+
+    <div class="task">
+      <div class="badges">
+        <img src="http://lb.gravatar.com/avatar/1a803f00357b8fc7939802f7dc219b94?d=https%3A%2F%2Fidenticons.github.com%2F1a803f00357b8fc7939802f7dc219b94.png&amp;s=52" title="author4" class=""/>
+        </div>
+      <h4 class="title">Add an Icon <nobr>(<strong><a href="https://github.com/ThStock/logbooks/issues/4">GHTSLB-4</a></strong>)</nobr></h4>
+      <div class="details">
+        <ul>
+          <li>Added an Icon</li>
           </ul>
       </div>
     </div>
