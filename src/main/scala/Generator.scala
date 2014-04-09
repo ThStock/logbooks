@@ -38,6 +38,9 @@ object Generator extends App {
     "Added a new Task for this list"
     ), Seq(author0))
 
+  val icon = Task("Add an Icon", githubTaskId(4), Seq("Added an Icon"),
+    Seq(author4))
+
   val misc = Task("Misc", None, Seq(
     "I've no idea what I've changed",
     "A misc line added",
@@ -52,7 +55,7 @@ object Generator extends App {
     "version" -> "1.0",
     "title" -> "logbooks",
     "title-notes" -> "v.0..v1.0",
-    "tasks" -> Seq(intialLayout, sampleData, tooLong, toggleDetails, misc),
+    "tasks" -> Seq(intialLayout, sampleData, tooLong, toggleDetails, icon, misc),
     "metaLines" -> Seq("git log v.0..v1.0 # 2010-10-10T12:12:12 @83b7ef")
     )
 
